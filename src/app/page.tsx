@@ -32,7 +32,7 @@ export default function Home() {
     }
   };
 
-  const getButtonStyles = (name) => {
+  const getButtonStyles = (name: string) => {
     const isActive = activeComponent === name;
     return {
       variant: "link",
