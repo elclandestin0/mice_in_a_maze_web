@@ -2,20 +2,15 @@
 
 import React, { useState } from 'react';
 import { useUnityContext } from 'react-unity-webgl';
-import { Flex, Box, Text, VStack, Button, ChakraProvider, Image } from '@chakra-ui/react';
+import { Flex, Box, Text, VStack, Button, ChakraProvider, Image, IconButton, Spacer, useBreakpointValue } from '@chakra-ui/react';
 import { Play } from '../components/play';
-import { FaUserCircle } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser } from '@fortawesome/free-regular-svg-icons';
+import { useTheme } from '@chakra-ui/react';
 
 export default function Home() {
-
+  const { breakpoints } = useTheme();
   const [activeComponent, setActiveComponent] = useState('play');
-
-  const { unityProvider } = useUnityContext({
-    loaderUrl: "Build/webgl.loader.js",
-    dataUrl: "Build/webgl.data",
-    frameworkUrl: "Build/webgl.framework.js",
-    codeUrl: "Build/webgl.wasm",
-  });
 
   const renderComponent = () => {
     switch (activeComponent) {
@@ -46,43 +41,37 @@ export default function Home() {
 
   return (
     <ChakraProvider>
-      <Flex justify="space-between" align="center" p={4} boxShadow="md" bg="white">
-        {/* Logo and Title */}
-        <Box>
-          <Image src="/cheese.gif" boxSize="50px" mr={2} />
-          <span>Mice in a Maze</span>
-        </Box>
+      <Box>
+        <Flex align="center" p={4} boxShadow="md" bg="white">
+          <Box>
+            <Text fontSize="3xl" fontWeight='bold' color='black'>Mice in a Maze</Text>
+          </Box>
+          <Flex as="nav" gap="4" ml={4}>
+            {/* Desktop navigation buttons */}
+            <Button {...getButtonStyles('play')} onClick={() => setActiveComponent('play')}>
+              Play
+            </Button>
+            <Button {...getButtonStyles('buy')} onClick={() => setActiveComponent('buy')}>
+              Shop
+            </Button>
+            <Button {...getButtonStyles('discover')} onClick={() => setActiveComponent('discover')}>
+              Discover
+            </Button>
+          </Flex>
+          <Spacer />
 
-        {/* Navigation Buttons */}
-        <Flex gap="2">
-          <Button
-            {...getButtonStyles('play')}
-            onClick={() => setActiveComponent('play')}
-          >
-            Play
-          </Button>
-          <Button
-            {...getButtonStyles('buy')}
-            onClick={() => setActiveComponent('buy')}
-          >
-            Shop
-          </Button>
-          <Button
-            {...getButtonStyles('discover')}
-            onClick={() => setActiveComponent('discover')}
-          >
-            Discover
-          </Button>
+          {/* User Avatar Icon */}
+          <IconButton
+            aria-label="User account"
+            icon={<FontAwesomeIcon icon={faUser} />}
+            isRound={true}
+            size="lg"
+          />
         </Flex>
-
-        {/* User Avatar Icon */}
-        <IconButton
-          aria-label="User account"
-          icon={<FaUserCircle size="24" />}
-          isRound={true}
-          size="lg"
-        />
-      </Flex>
+        <VStack spacing={4} justify="center" align="center" width="100%" height="calc(100vh - 64px)">
+          {renderComponent()}
+        </VStack>
+      </Box>
     </ChakraProvider>
   );
 }
