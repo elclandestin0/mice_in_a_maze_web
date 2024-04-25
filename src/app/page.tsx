@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useUnityContext } from 'react-unity-webgl';
-import { Flex, Box, Text, VStack, Button, ChakraProvider } from '@chakra-ui/react';
+import { Flex, Box, Text, VStack, Button, ChakraProvider, Image } from '@chakra-ui/react';
 import { Play } from '../components/play';
+import { FaUserCircle } from 'react-icons/fa';
 
 export default function Home() {
 
@@ -36,7 +37,7 @@ export default function Home() {
     const isActive = activeComponent === name;
     return {
       variant: "link",
-      size:"lg",
+      size: "lg",
       colorScheme: "teal",
       fontWeight: isActive ? "bold" : "normal",
       transition: 'background-color 0.2s' // Smooth background color transition on hover
@@ -45,28 +46,42 @@ export default function Home() {
 
   return (
     <ChakraProvider>
-      <Flex direction="column" align="center" justify="start" p={12} bg="white">
-        <Flex justify="space-between" align="center" w="100%">
-          <Box>
-            <Text fontSize="2xl" fontWeight="bold" color="black">Mice in a Maze</Text>
-          </Box>
-          <Flex gap={30}>
-            {/* Buttons to switch components */}
-            <Button {...getButtonStyles('play')} onClick={() => setActiveComponent('play')}>
-              Play
-            </Button>
-            <Button {...getButtonStyles('buy')} onClick={() => setActiveComponent('buy')}>
-              Buy
-            </Button>
-            <Button {...getButtonStyles('discover')} onClick={() => setActiveComponent('discover')}>
-              Discover
-            </Button>
-          </Flex>
+      <Flex justify="space-between" align="center" p={4} boxShadow="md" bg="white">
+        {/* Logo and Title */}
+        <Box>
+          <Image src="/cheese.gif" boxSize="50px" mr={2} />
+          <span>Mice in a Maze</span>
+        </Box>
+
+        {/* Navigation Buttons */}
+        <Flex gap="2">
+          <Button
+            {...getButtonStyles('play')}
+            onClick={() => setActiveComponent('play')}
+          >
+            Play
+          </Button>
+          <Button
+            {...getButtonStyles('buy')}
+            onClick={() => setActiveComponent('buy')}
+          >
+            Shop
+          </Button>
+          <Button
+            {...getButtonStyles('discover')}
+            onClick={() => setActiveComponent('discover')}
+          >
+            Discover
+          </Button>
         </Flex>
-        {/* Render the active component */}
-        <VStack spacing={4} justify="center" align="center" width="100%" height="calc(100vh - 64px)">
-          {renderComponent()}
-        </VStack>
+
+        {/* User Avatar Icon */}
+        <IconButton
+          aria-label="User account"
+          icon={<FaUserCircle size="24" />}
+          isRound={true}
+          size="lg"
+        />
       </Flex>
     </ChakraProvider>
   );
