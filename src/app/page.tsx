@@ -46,16 +46,16 @@ export default function Home() {
           <Box>
             <Text fontSize="3xl" fontWeight='bold' color='black'>Mice in a Maze</Text>
           </Box>
-          <Flex as="nav" gap="4" ml={4}>
+          <Flex as="nav" gap="6" ml={8}>
             {/* Desktop navigation buttons */}
             <Button {...getButtonStyles('play')} onClick={() => setActiveComponent('play')}>
               Play
             </Button>
-            <Button {...getButtonStyles('buy')} onClick={() => setActiveComponent('buy')}>
-              Shop
-            </Button>
-            <Button {...getButtonStyles('discover')} onClick={() => setActiveComponent('discover')}>
+            <Button isDisabled {...getButtonStyles('discover')} onClick={() => setActiveComponent('discover')}>
               Discover
+            </Button>
+            <Button isDisabled {...getButtonStyles('buy')} onClick={() => setActiveComponent('buy')}>
+              Shop
             </Button>
           </Flex>
           <Spacer />
