@@ -7,7 +7,9 @@ import { Play } from '../components/Play';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { useTheme } from '@chakra-ui/react';
+import { Badge } from '@chakra-ui/react'
 import GoogleSignIn from '@/components/GoogleSignIn';
+import SignInModal from '@/components/SignInModal';
 
 export default function Home() {
   const { breakpoints } = useTheme();
@@ -61,14 +63,7 @@ export default function Home() {
           </Flex>
           <Spacer />
 
-          {/* User Avatar Icon */}
-          <IconButton
-            aria-label="User account"
-            icon={<FontAwesomeIcon icon={faUser} />}
-            isRound={true}
-            size="lg"
-          />
-          {/* <GoogleSignIn /> */}
+          <SignInModal />
         </Flex>
         <VStack spacing={4} justify="center" align="center" width="100%" height="calc(100vh - 64px)">
           {renderComponent()}
