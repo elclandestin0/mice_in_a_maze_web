@@ -1,6 +1,6 @@
 // src/contexts/GoogleAuthContext.tsx
 import React, { createContext, useContext, ReactNode, useState, useEffect, useCallback } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, User, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app, auth } from "@/services/firebase";
 import { doc, getDoc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 
@@ -16,7 +16,7 @@ interface GoogleAuthProviderProps {
     children: ReactNode;
 }
 
-export const GoogleAuthProvider: React.FC<{}> = () => {
+export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -30,6 +30,7 @@ export const GoogleAuthProvider: React.FC<{}> = () => {
         return () => unsubscribe();
     }, []);
 
+
     const signInWithEmail = useCallback(async (email: string, password: string) => {
         setLoading(true);
         try {
@@ -40,6 +41,52 @@ export const GoogleAuthProvider: React.FC<{}> = () => {
             const db = getFirestore(app);
             const user = result.user;
             const docRef = await getDoc(doc(db, "users", user.uid));
+            console.log(user);
+            if (!docRef.exists()) {
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    displayName: user.email,
+                }).catch(err => {
+                    console.log(err);
+                });
+                const userData = docRef.data();
+                setUser({
+                    ...user,
+                    displayName: userData?.displayName, // Set from Firestore document
+                    // Include any other user properties you need from Firestore
+                });
+
+            } else {
+                await updateDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    displayName: user.email,
+                }).catch(err => {
+                    console.log(err);
+                });
+                const userData = docRef.data();
+                setUser({
+                    ...user,
+                    displayName: userData.displayName, // Set from Firestore document
+                    // Include any other user properties you need from Firestore
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    }, []);
+
+    const createUser = useCallback(async (email: any, password: any) => {
+        setLoading(true);
+        try {
+            // Attempt to sign in with Google
+            const result = await createUserWithEmailAndPassword(auth, email, password);
+            // You can access the signed-in user via result.user
+            // Google has very cool naming for their databases. Lovely for development.
+            const db = getFirestore(app);
+            const user = result.user;
+            const docRef = await getDoc(doc(db, "users", user.uid));
+            console.log(user);
             if (!docRef.exists()) {
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
@@ -75,12 +122,10 @@ export const GoogleAuthProvider: React.FC<{}> = () => {
     }, []);
 
     return (
-        <GoogleAuthContext.Provider value= {{ user, loading, signInWithEmail }
-}>
-    { children }
-    < /GoogleAuthContext.Provider>
-    )
-;
+        <GoogleAuthContext.Provider value={{ user, loading, signInWithEmail }}>
+            {children}
+        </GoogleAuthContext.Provider>
+    );
 };
 
 export const useGoogleAuth = () => {
