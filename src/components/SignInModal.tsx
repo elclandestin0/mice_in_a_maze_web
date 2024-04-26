@@ -1,15 +1,4 @@
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    useDisclosure,
-    Button,
-    IconButton
-} from '@chakra-ui/react';
+import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, IconButton, Button, Flex, Box, Image } from '@chakra-ui/react';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -25,20 +14,29 @@ const SignInModal: React.FC = () => {
                 isRound={true}
                 size="lg"
             />
-            <Modal isOpen={isOpen} onClose={onClose}>
+
+            <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Modal Title</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        Kyrie eleison
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
-                            Close
-                        </Button>
-                        <Button variant='ghost'>Secondary Action</Button>
-                    </ModalFooter>
+                    <Flex>
+                        {/* Section 1: Text content */}
+                        <Box w="60%" p="4">
+                            <ModalHeader>Sign in</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <Button onClick={onClose}>Metamask</Button>
+                                <Button onClick={onClose}>Google</Button>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button onClick={onClose}>Close</Button>
+                            </ModalFooter>
+                        </Box>
+
+                        {/* Section 2: Illustrative Image */}
+                        <Box w="40%" bg="gray.100">
+                            <Image src="1.webp" alt="Illustration" objectFit="cover" w="300p" h="300px" />
+                        </Box>
+                    </Flex>
                 </ModalContent>
             </Modal>
         </>
