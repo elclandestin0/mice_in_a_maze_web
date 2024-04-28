@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useUnityContext } from 'react-unity-webgl';
 import { Flex, Box, Text, VStack, Button, ChakraProvider, Image, IconButton, Spacer, useBreakpointValue } from '@chakra-ui/react';
-import { Play } from '../components/play';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-regular-svg-icons';
+import { Play } from '../components/Play';
 import { useTheme } from '@chakra-ui/react';
+import SignInModal from '@/components/SignInModal';
 
 export default function Home() {
   const { breakpoints } = useTheme();
@@ -60,13 +58,7 @@ export default function Home() {
           </Flex>
           <Spacer />
 
-          {/* User Avatar Icon */}
-          <IconButton
-            aria-label="User account"
-            icon={<FontAwesomeIcon icon={faUser} />}
-            isRound={true}
-            size="lg"
-          />
+          <SignInModal />
         </Flex>
         <VStack spacing={4} justify="center" align="center" width="100%" height="calc(100vh - 64px)">
           {renderComponent()}
