@@ -1,14 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useUnityContext } from 'react-unity-webgl';
 import { Flex, Box, Text, VStack, Button, ChakraProvider, Image, IconButton, Spacer, useBreakpointValue } from '@chakra-ui/react';
 import { Play } from '../components/Play';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { useTheme } from '@chakra-ui/react';
-import { Badge } from '@chakra-ui/react'
-import GoogleSignIn from '@/components/GoogleSignIn';
 import SignInModal from '@/components/SignInModal';
 
 export default function Home() {
