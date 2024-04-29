@@ -10,7 +10,7 @@ const MetaMaskConnect: React.FC = () => {
             connectWallet().then(() => {
                 signIn().catch(err => console.log(err));
             }).catch(err => console.log(err))
-        }} isDisabled={account} size="lg">
+        }} isDisabled={account != null} size="lg">
             {account ? 'Connected' : 'Connect to MetaMask'}
         </Button>
     );
