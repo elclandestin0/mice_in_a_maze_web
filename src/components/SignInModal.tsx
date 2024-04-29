@@ -11,11 +11,13 @@ import {
   Button,
   Flex,
   Box,
+  VStack,
   Image,
 } from "@chakra-ui/react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GoogleSignIn from "./GoogleSignIn";
+import MetaMaskConnect from "./MetamaskConnect";
 
 const SignInModal: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -38,8 +40,10 @@ const SignInModal: React.FC = () => {
               <ModalHeader>Sign in</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <Button onClick={onClose}>Metamask</Button>
-                <GoogleSignIn />
+                <VStack>
+                  <MetaMaskConnect />
+                  <GoogleSignIn />
+                </VStack>
               </ModalBody>
               <ModalFooter>
                 <Button onClick={onClose}>Close</Button>
