@@ -38,7 +38,7 @@ const SignInModal: React.FC = () => {
             {/* Section 1: Text content */}
             <Box w="60%" p="4">
               <ModalHeader>Sign in</ModalHeader>
-              <ModalCloseButton />
+              <ModalCloseButton color="white"/>
               <ModalBody>
                 <VStack>
                   <MetaMaskConnect />
