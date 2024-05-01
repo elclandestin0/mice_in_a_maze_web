@@ -6,7 +6,7 @@ type EquippedItems = {
     [key: string]: any;
   };
   
-  export interface User {
+  export interface Player {
     username: string;
     email: string;
     lastSignedIn: string; // ISO date string

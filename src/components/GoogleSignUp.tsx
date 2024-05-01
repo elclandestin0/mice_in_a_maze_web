@@ -1,9 +1,9 @@
 import React from 'react';
 import {Button, Input, Stack} from '@chakra-ui/react';
-import {useGoogleAuth} from "@/contexts/AuthContext";
+import {useAuth} from "@/contexts/AuthContext";
 
 const GoogleSignIn: React.FC = () => {
-    const {signIn} = useGoogleAuth();
+    const {signIn} = useAuth();
     const handleSignIn = async () => {
         try {
             await signIn();
@@ -14,19 +14,6 @@ const GoogleSignIn: React.FC = () => {
 
     return (
         <Stack spacing={4}>
-            {/* <Input
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                size="lg"
-                color="white"
-            />
-            <Input
-                placeholder="Password"
-                type="password"
-                onChange={(e) => setPassword(e.target.value)}
-                size="lg"
-                color="white"
-            /> */}
             <Button colorScheme="blue" onClick={handleSignIn} size="lg">
                 Sign Up with Google
             </Button>

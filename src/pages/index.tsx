@@ -16,7 +16,7 @@ import {
 import { Play } from "../components/Play";
 import { Discover } from "../components/Discover";
 import { useTheme } from "@chakra-ui/react";
-import SignInModal from "@/components/SignInModal";
+import SignInModal from "@/components/PlayerModal";
 
 export default function Home() {
   const { breakpoints } = useTheme();

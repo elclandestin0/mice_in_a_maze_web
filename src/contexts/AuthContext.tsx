@@ -25,17 +25,18 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { computeMorphedAttributes } from "three-stdlib";
+import { Player } from "@/types/Player";
 
-interface GoogleAuthContextType {
+interface AuthContextType {
   user: User | null;
+  player: Player | null;
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   createUser: (email: string, password: string) => Promise<void>;
   signIn: () => {};
 }
 
-const AuthContext = createContext<GoogleAuthContextType | undefined>(
+const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -68,10 +70,10 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
         // You can access the signed-in user via result.user
 
         const user = result.user;
-        const docRef = await getDoc(doc(db, "users", user.uid));
+        const docRef = await getDoc(doc(db, "players", user.uid));
         console.log(user);
         if (!docRef.exists()) {
-          await setDoc(doc(db, "users", user.uid), {
+          await setDoc(doc(db, "players", user.uid), {
             email: user.email,
             displayName: user.email,
           }).catch((err) => {
@@ -84,7 +86,7 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
             // Include any other user properties you need from Firestore
           });
         } else {
-          await updateDoc(doc(db, "users", user.uid), {
+          await updateDoc(doc(db, "players", user.uid), {
             email: user.email,
             displayName: user.email,
           }).catch((err) => {
@@ -111,29 +113,30 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
       const result = await signInWithPopup(auth, provider);
       // Google has very cool naming for their databases. Lovely for development.
       const user = result.user;
-      const docRef = await getDoc(doc(db, "users/", user.uid));
+      const docRef = await getDoc(doc(db, "players/", user.uid));
+      const playerData: Player = {
+        username: user.displayName ?? "No Name", // Use "No Name" if displayName is null
+        email: user.email ?? "No Email",         // Use "No Email" if email is null
+        lastSignedIn: new Date().toISOString(), // Current time as ISO string
+        metatmaskAddress: "",                   // Empty string for now
+        authToken: "",                          // Empty string for now
+        equippedItems: [],                      // Empty array
+        inventory: []                           // Empty array
+      };
+
       if (!docRef.exists()) {
         console.log("User not found. Setting new user in the firestore");
-        await setDoc(doc(db, "users/", user.uid), {
-          username: user.displayName,
-          email: user.email
-        }).catch((err: any) => {
+        await setDoc(doc(db, "players", user.uid), playerData).catch((err: any) => {
           console.log(err);
         });
       }
       else {
         console.log(docRef.data());
-        await updateDoc(doc(db, "users/", user.uid), {
-          username: user.displayName,
-          email: user.email,
-        }).catch((err) => {
+        await updateDoc(doc(db, "players", user.uid), playerData).catch((err) => {
           console.log(err);
         });
-        const userData = docRef.data();
-        setUser({
-          ...user,
-          displayName: userData?.displayName, // Set from Firestore document
-          // Include any other user properties you need from Firestore
+        setPlayer({
+          ...playerData,
         });
       }
     } catch (error) {
@@ -155,10 +158,10 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
       // Google has very cool naming for their databases. Lovely for development.
       const db = getFirestore(app);
       const user = result.user;
-      const docRef = await getDoc(doc(db, "users", user.uid));
+      const docRef = await getDoc(doc(db, "players", user.uid));
       console.log(user);
       if (!docRef.exists()) {
-        await setDoc(doc(db, "users", user.uid), {
+        await setDoc(doc(db, "players", user.uid), {
           email: user.email,
           displayName: user.email,
         }).catch((err) => {
@@ -172,7 +175,7 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
           // Include any other user properties you need from Firestore
         });
       } else {
-        await updateDoc(doc(db, "users", user.uid), {
+        await updateDoc(doc(db, "players", user.uid), {
           email: user.email,
           displayName: user.email,
         }).catch((err) => {
@@ -192,14 +195,14 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signInWithEmail, createUser, signIn }}
+      value={{ player, user, loading, signInWithEmail, createUser, signIn }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useGoogleAuth = () => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useGoogleAuth must be used within a GoogleAuthProvider");

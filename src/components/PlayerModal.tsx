@@ -14,22 +14,33 @@ import {
   VStack,
   Image,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import GoogleSignIn from "./GoogleSignIn";
+import GoogleSignIn from "./GoogleSignUp";
 import MetaMaskConnect from "./MetamaskConnect";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 const SignInModal: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { player } = useAuth();
+
+  useEffect(() => {
+    console.log
+  }, [player]);
+
   return (
     <>
-      <IconButton
+      {player == null && (<IconButton
         aria-label="User account"
         onClick={onOpen}
         icon={<FontAwesomeIcon icon={faUser} />}
         isRound={true}
         size="lg"
-      />
+      />)}
+
+      {player && ( <><Button>Connected</Button></>)}
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
         <ModalOverlay />
@@ -38,7 +49,7 @@ const SignInModal: React.FC = () => {
             {/* Section 1: Text content */}
             <Box w="60%" p="4">
               <ModalHeader>Sign in</ModalHeader>
-              <ModalCloseButton color="white"/>
+              <ModalCloseButton color="white" />
               <ModalBody>
                 <VStack>
                   <MetaMaskConnect />
