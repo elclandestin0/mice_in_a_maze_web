@@ -5,23 +5,19 @@ import React, {
   ReactNode,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 
 import {
   getAuth,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signInWithPopup,
   User,
-  createUserWithEmailAndPassword,
 } from "firebase/auth";
 
 import { app, auth, provider, db } from "@/services/firebase";
 import {
   doc,
   getDoc,
-  getFirestore,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
