@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Input, Stack} from '@chakra-ui/react';
-import {useGoogleAuth} from "@/contexts/GoogleAuthContext";
+import {useGoogleAuth} from "@/contexts/AuthContext";
 
 const GoogleSignIn: React.FC = () => {
     const {signIn} = useGoogleAuth();

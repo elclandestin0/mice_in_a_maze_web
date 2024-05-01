@@ -5,7 +5,7 @@ import ThreeCube from './Item';
 
 export const Discover: React.FC = () => {
   return (
-    <Box w="75vw" h="75vh" display="flex" alignItems="center" justifyContent="center">
+    <Box w="90vw" h="90vh" display="flex" alignItems="center" justifyContent="center">
       <ThreeCube />
     </Box>
   );

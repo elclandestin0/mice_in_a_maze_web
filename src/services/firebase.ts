@@ -4,6 +4,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { Auth, getAuth, GoogleAuthProvider } from "firebase/auth";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -15,16 +16,18 @@ const firebaseConfig = {
   appId: "1:463805920666:web:530219f5b4ae412b99f623",
   measurementId: "G-8GGDLQZE9X",
 };
-
 const app = initializeApp(firebaseConfig);
 
 let analytics;
 let auth: Auth;
 let provider: GoogleAuthProvider;
+let db: Firestore;
+
 if (typeof window !== "undefined" && "measurementId" in firebaseConfig) {
   analytics = getAnalytics(app);
   auth = getAuth(app);
   provider = new GoogleAuthProvider();
+  db = getFirestore(app);
 }
 
-export { app, analytics, auth, provider };
+export { app, analytics, auth, provider, db };

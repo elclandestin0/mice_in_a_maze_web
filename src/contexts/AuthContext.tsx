@@ -17,7 +17,7 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 
-import { app, auth, provider } from "@/services/firebase";
+import { app, auth, provider, db } from "@/services/firebase";
 import {
   doc,
   getDoc,
@@ -25,6 +25,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { computeMorphedAttributes } from "three-stdlib";
 
 interface GoogleAuthContextType {
   user: User | null;
@@ -34,7 +35,7 @@ interface GoogleAuthContextType {
   signIn: () => {};
 }
 
-const GoogleAuthContext = createContext<GoogleAuthContextType | undefined>(
+const AuthContext = createContext<GoogleAuthContextType | undefined>(
   undefined
 );
 
@@ -42,7 +43,7 @@ interface GoogleAuthProviderProps {
   children: ReactNode;
 }
 
-export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({
+export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -65,8 +66,7 @@ export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({
         // Attempt to sign in with Google
         const result = await signInWithEmailAndPassword(auth, email, password);
         // You can access the signed-in user via result.user
-        // Google has very cool naming for their databases. Lovely for development.
-        const db = getFirestore(app);
+
         const user = result.user;
         const docRef = await getDoc(doc(db, "users", user.uid));
         console.log(user);
@@ -90,10 +90,12 @@ export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({
           }).catch((err) => {
             console.log(err);
           });
+
           const userData = docRef.data();
           setUser({
             ...user,
-            displayName: userData.displayName, // Set from Firestore document
+            displayName: userData.displayName,
+            // Set from Firestore document
             // Include any other user properties you need from Firestore
           });
         }
@@ -108,19 +110,32 @@ export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({
     try {
       const result = await signInWithPopup(auth, provider);
       // Google has very cool naming for their databases. Lovely for development.
-      const db = getFirestore(app);
       const user = result.user;
-      const docRef = await getDoc(doc(db, "users", user.uid));
-      if (!docRef) {
-        await setDoc(doc(db, "users", user.uid), {
-          email: user.email,
-          displayName: user.displayName,
+      const docRef = await getDoc(doc(db, "users/", user.uid));
+      if (!docRef.exists()) {
+        console.log("User not found. Setting new user in the firestore");
+        await setDoc(doc(db, "users/", user.uid), {
+          username: user.displayName,
+          email: user.email
         }).catch((err: any) => {
           console.log(err);
         });
-        console.log("User not found. Setting new user in the firestore");
       }
-      console.log("User found. No need to set a doc");
+      else {
+        console.log(docRef.data());
+        await updateDoc(doc(db, "users/", user.uid), {
+          username: user.displayName,
+          email: user.email,
+        }).catch((err) => {
+          console.log(err);
+        });
+        const userData = docRef.data();
+        setUser({
+          ...user,
+          displayName: userData?.displayName, // Set from Firestore document
+          // Include any other user properties you need from Firestore
+        });
+      }
     } catch (error) {
       // Handle errors here, such as displaying a notification
       console.error(error);
@@ -176,16 +191,16 @@ export const GoogleAuthProvider: React.FC<GoogleAuthProviderProps> = ({
   }, []);
 
   return (
-    <GoogleAuthContext.Provider
+    <AuthContext.Provider
       value={{ user, loading, signInWithEmail, createUser, signIn }}
     >
       {children}
-    </GoogleAuthContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
 export const useGoogleAuth = () => {
-  const context = useContext(GoogleAuthContext);
+  const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useGoogleAuth must be used within a GoogleAuthProvider");
   }

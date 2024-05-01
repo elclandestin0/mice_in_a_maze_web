@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { FBXLoader } from "three-stdlib";
 import { useLoader } from "@react-three/fiber";
-import { Mesh, Sphere } from "three";
+import { Mesh, Object3DEventMap, Sphere, Group, Box3, Object3D, Vector3 } from "three";
 
 const RotatingFBXItem: React.FC = () => {
   const meshRef = useRef<Mesh>(null!);
@@ -11,44 +11,46 @@ const RotatingFBXItem: React.FC = () => {
   const fbx = useLoader(FBXLoader, "/Mouse_Mesh.fbx");
 
   useEffect(() => {
-    if (fbx && meshRef.current) {
-      // Assuming fbx is a Mesh object, otherwise cast it accordingly
-      //   fbx.geometry.computeBoundingSphere();
-      const boundingSphere: Sphere = fbx.geometry.getBoundingSphere;
-      const radius = boundingSphere.radius;
-      const fov = camera.fov;
+    if (fbx) {
+      const sphere = computeBoundingSphere(fbx);
+      if (sphere) {
+        const fov = camera.fov * (Math.PI / 180);
+        // const offset = sphere.radius / Math.tan(fov / 2) * 1.1;  // 1.1 to ensure the model is fully visible
 
-      // Transform the bounding sphere's center to world coordinates
-      const cog = fbx.localToWorld(boundingSphere.center.clone());
+        const cameraPosition = sphere.center.clone();
+        cameraPosition.z -= -350;
+        camera.position.copy(cameraPosition);
+        camera.lookAt(sphere.center);
 
-      // Position the camera to frame the entire object based on the bounding sphere
-      camera.position.set(
-        cog.x,
-        cog.y,
-        cog.z + (1.1 * radius) / Math.tan((fov * Math.PI) / 360)
-      );
-
-      // Ensure the camera looks at the center of the bounding sphere
-      camera.lookAt(cog);
-
-      // Update the camera's projection matrix
-      camera.updateProjectionMatrix();
-
-      // Set meshRef's position to the inverse of the CoG to rotate around its center
-      meshRef.current.position.copy(cog.multiplyScalar(-1));
-
-      // Update the scene's matrix world
-      scene.updateMatrixWorld(true);
+        camera.updateProjectionMatrix();
+      }
     }
-  }, [fbx, camera, scene]);
+  }, [fbx, camera]);
 
   useFrame(() => {
     if (meshRef.current) {
       // Rotate around Y axis
-      meshRef.current.rotation.y += 0.01;
+      meshRef.current.rotation.y += 0.035;
     }
   });
 
+  function computeBoundingSphere(object: Object3D): Sphere | null {
+    const box = new Box3();
+
+    object.traverse((child) => {
+        if ((child as Mesh).isMesh) {
+            const mesh = child as Mesh;
+            mesh.geometry.computeBoundingSphere();
+            box.expandByPoint((child as Mesh).isMesh ? mesh.geometry.boundingSphere.center : new Vector3(0, 0, 0));
+        }
+    });
+
+    if (box.isEmpty()) return null;
+
+    const sphere = new Sphere();
+    box.getBoundingSphere(sphere);
+    return sphere;
+}
   return (
     <group ref={meshRef}>
       <primitive object={fbx} />
