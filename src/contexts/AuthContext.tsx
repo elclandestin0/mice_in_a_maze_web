@@ -31,8 +31,6 @@ interface AuthContextType {
   user: User | null;
   player: Player | null;
   loading: boolean;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  createUser: (email: string, password: string) => Promise<void>;
   signIn: () => {};
 }
 
@@ -61,141 +59,48 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
     return () => unsubscribe();
   }, []);
 
-  const signInWithEmail = useCallback(
-    async (email: string, password: string) => {
-      setLoading(true);
-      try {
-        // Attempt to sign in with Google
-        const result = await signInWithEmailAndPassword(auth, email, password);
-        // You can access the signed-in user via result.user
-
-        const user = result.user;
-        const docRef = await getDoc(doc(db, "players", user.uid));
-        console.log(user);
-        if (!docRef.exists()) {
-          await setDoc(doc(db, "players", user.uid), {
-            email: user.email,
-            displayName: user.email,
-          }).catch((err) => {
-            console.log(err);
-          });
-          const userData = docRef.data();
-          setUser({
-            ...user,
-            displayName: userData?.displayName, // Set from Firestore document
-            // Include any other user properties you need from Firestore
-          });
-        } else {
-          await updateDoc(doc(db, "players", user.uid), {
-            email: user.email,
-            displayName: user.email,
-          }).catch((err) => {
-            console.log(err);
-          });
-
-          const userData = docRef.data();
-          setUser({
-            ...user,
-            displayName: userData.displayName,
-            // Set from Firestore document
-            // Include any other user properties you need from Firestore
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    []
-  );
-
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       // Google has very cool naming for their databases. Lovely for development.
       const user = result.user;
-      const docRef = await getDoc(doc(db, "players/", user.uid));
-      const playerData: Player = {
-        username: user.displayName ?? "No Name", // Use "No Name" if displayName is null
-        email: user.email ?? "No Email",         // Use "No Email" if email is null
-        lastSignedIn: new Date().toISOString(), // Current time as ISO string
-        metatmaskAddress: "",                   // Empty string for now
-        authToken: "",                          // Empty string for now
-        equippedItems: [],                      // Empty array
-        inventory: []                           // Empty array
-      };
-
-      if (!docRef.exists()) {
-        console.log("User not found. Setting new user in the firestore");
-        await setDoc(doc(db, "players", user.uid), playerData).catch((err: any) => {
-          console.log(err);
-        });
-      }
-      else {
-        console.log(docRef.data());
-        await updateDoc(doc(db, "players", user.uid), playerData).catch((err) => {
-          console.log(err);
-        });
-        setPlayer({
-          ...playerData,
-        });
-      }
-    } catch (error) {
-      // Handle errors here, such as displaying a notification
+      handlePlayerSignIn(user).then(() => {
+        console.log("user signed in");
+      }).catch(console.error);
+    }
+    catch (error) {
       console.error(error);
     }
   };
 
-  const createUser = useCallback(async (email: any, password: any) => {
-    setLoading(true);
-    try {
-      // Attempt to sign in with Google
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      // You can access the signed-in user via result.user
-      // Google has very cool naming for their databases. Lovely for development.
-      const db = getFirestore(app);
-      const user = result.user;
-      const docRef = await getDoc(doc(db, "players", user.uid));
-      console.log(user);
-      if (!docRef.exists()) {
-        await setDoc(doc(db, "players", user.uid), {
-          email: user.email,
-          displayName: user.email,
-        }).catch((err) => {
-          console.log(err);
-        });
 
-        const userData = docRef.data();
-        setUser({
-          ...user,
-          displayName: userData?.displayName, // Set from Firestore document
-          // Include any other user properties you need from Firestore
-        });
-      } else {
-        await updateDoc(doc(db, "players", user.uid), {
-          email: user.email,
-          displayName: user.email,
-        }).catch((err) => {
-          console.log(err);
-        });
-        const userData = docRef.data();
-        setUser({
-          ...user,
-          displayName: userData.displayName, // Set from Firestore document
-          // Include any other user properties you need from Firestore
-        });
-      }
-    } catch (error) {
-      console.error(error);
+  async function handlePlayerSignIn(user: any): Promise<void> {
+    const playerRef = doc(db, "players", user.uid);
+    const docRef = await getDoc(playerRef);
+
+    const playerData: Player = {
+      username: user.displayName ?? "No Name", // Use "No Name" if displayName is null
+      email: user.email ?? "No Email",         // Use "No Email" if email is null
+      lastSignedIn: new Date().toISOString(), // Current time as ISO string
+      metatmaskAddress: "",                   // Empty string for now
+      authToken: user.refreshToken,           // Storing Firebase Auth token
+      equippedItems: [],                      // Initially empty
+      inventory: []                           // Initially empty
+    };
+    if (!docRef.exists()) {
+      console.log("User not found. Setting new user in Firestore");
+      await setDoc(playerRef, playerData).catch(console.error);
+    } else {
+      console.log("Updating existing user data");
+      await updateDoc(playerRef, playerData).catch(console.error);
     }
-  }, []);
+    setPlayer(playerData);
+  }
+
 
   return (
     <AuthContext.Provider
-      value={{ player, user, loading, signInWithEmail, createUser, signIn }}
+      value={{ player, user, loading, signIn }}
     >
       {children}
     </AuthContext.Provider>

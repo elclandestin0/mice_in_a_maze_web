@@ -27,7 +27,7 @@ const SignInModal: React.FC = () => {
   const { player } = useAuth();
 
   useEffect(() => {
-    console.log
+    console.log(player);
   }, [player]);
 
   return (
@@ -40,7 +40,7 @@ const SignInModal: React.FC = () => {
         size="lg"
       />)}
 
-      {player && ( <><Button>Connected</Button></>)}
+      {player && ( <><Button>Connected as {player.username}</Button></>)}
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered size="xl">
         <ModalOverlay />
@@ -61,7 +61,6 @@ const SignInModal: React.FC = () => {
               </ModalFooter>
             </Box>
 
-            {/* Section 2: Illustrative Image */}
             <Box w="40%" bg="gray.100">
               <Image
                 src="1.webp"
