@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   Box,
@@ -17,11 +17,12 @@ import { Play } from "../components/Play";
 import { Discover } from "../components/Discover";
 import { useTheme } from "@chakra-ui/react";
 import SignInModal from "@/components/PlayerModal";
+import { useUnity } from "@/hooks/useUnity";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 export default function Home() {
-  const { breakpoints } = useTheme();
   const [activeComponent, setActiveComponent] = useState("play");
-
   const renderComponent = () => {
     switch (activeComponent) {
       case "play":

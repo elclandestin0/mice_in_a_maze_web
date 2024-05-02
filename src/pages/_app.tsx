@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import type { AppProps } from 'next/app'
-import { app, analytics } from '../services/firebase';
+import { app, analytics } from '../hooks/useUnity';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { MetaMaskProvider } from '@/contexts/MetaMaskContext';
 

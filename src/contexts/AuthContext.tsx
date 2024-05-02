@@ -14,7 +14,8 @@ import {
   User,
 } from "firebase/auth";
 
-import { app, auth, provider, db } from "@/services/firebase";
+import { auth, provider, db } from "@/services/firebase";
+import { useUnity } from '@/hooks/useUnity';
 import {
   doc,
   getDoc,
@@ -58,17 +59,15 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      // Google has very cool naming for their databases. Lovely for development.
       const user = result.user;
       handlePlayerSignIn(user).then(() => {
-        console.log("user signed in");
+        console.log("Signed in");
       }).catch(console.error);
     }
     catch (error) {
       console.error(error);
     }
   };
-
 
   async function handlePlayerSignIn(user: any): Promise<void> {
     const playerRef = doc(db, "players", user.uid);

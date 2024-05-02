@@ -1,5 +1,5 @@
 import { signInWithPopup, signOut, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, provider, app } from '@/services/firebase';
+import { auth, provider, app } from '@/hooks/useUnity';
 import { doc, setDoc, getFirestore, getDoc, updateDoc } from "firebase/firestore";
 
 const signIn = async () => {
