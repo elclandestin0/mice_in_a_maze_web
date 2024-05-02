@@ -7,12 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function Play() {
 
-    const { unityProvider, requestFullscreen, isLoaded, sendMessage } = useUnity();
+    const { unityProvider,  isLoaded, sendMessage } = useUnity();
     const { player } = useAuth();
-
-    function handleClickEnterFullscreen() {
-        requestFullscreen(true);
-    }
 
     useEffect(() => {
         console.log("isLoaded index: ", isLoaded);
@@ -26,7 +22,6 @@ export function Play() {
     return (
         <>
             <Unity style={{ visibility: isLoaded ? "visible" : "hidden" }} unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
-            <Button p={5} colorScheme='teal' onClick={handleClickEnterFullscreen}>Enter Fullscreen</Button>
         </>
     );
 }
