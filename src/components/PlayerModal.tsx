@@ -25,7 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const SignInModal: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { player } = useAuth();
-
+  
   useEffect(() => {
     console.log(player);
   }, [player]);

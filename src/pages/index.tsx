@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Box,
@@ -8,18 +8,10 @@ import {
   VStack,
   Button,
   ChakraProvider,
-  Image,
-  IconButton,
   Spacer,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Play } from "../components/Play";
-import { Discover } from "../components/Discover";
-import { useTheme } from "@chakra-ui/react";
 import SignInModal from "@/components/PlayerModal";
-import { useUnity } from "@/hooks/useUnity";
-import { useAuth } from "@/contexts/AuthContext";
-
 
 export default function Home() {
   const [activeComponent, setActiveComponent] = useState("play");
@@ -29,9 +21,6 @@ export default function Home() {
         return <Play />;
       case "buy":
         return <Text>Discover Component</Text>;
-        return <Discover />;
-      case "discover":
-        return <Discover />;
       default:
         return <Text>Welcome to Mice in a Maze!</Text>;
     }

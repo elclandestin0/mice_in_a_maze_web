@@ -15,7 +15,6 @@ import {
 } from "firebase/auth";
 
 import { auth, provider, db } from "@/services/firebase";
-import { useUnity } from '@/hooks/useUnity';
 import {
   doc,
   getDoc,

@@ -17,17 +17,13 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@react-three/fiber": "^8.16.2",
-    "@types/three": "^0.164.0",
     "firebase": "^10.11.1",
     "firebaseui": "^6.1.0",
     "framer-motion": "^11.1.7",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-unity-webgl": "^9.5.2",
-    "three": "^0.164.1",
-    "three-stdlib": "^2.29.9"
+    "react-unity-webgl": "^9.5.2"
   },
   "devDependencies": {
     "@types/node": "^20",
