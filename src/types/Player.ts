@@ -7,6 +7,7 @@ type Inventory = {
 };
 
 export interface Player {
+  [key: string]: any;
   username: string;
   email: string;
   lastSignedIn: string; // ISO date string

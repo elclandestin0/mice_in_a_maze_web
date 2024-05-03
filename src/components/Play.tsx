@@ -34,7 +34,7 @@ export function Play() {
 
     return (
         <>
-            <Unity style={{ visibility: isLoaded ? "visible" : "hidden" }} unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
+            <Unity unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
             {/* <Button p={5} colorScheme='teal' onClick={handleClickEnterFullscreen}>Enter Fullscreen</Button> */}
         </>
     );
