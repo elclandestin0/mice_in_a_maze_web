@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import {Button, Stack} from '@chakra-ui/react';
 import {useAuth} from "@/contexts/AuthContext";
-import { useUnity } from '@/hooks/useUnity';
 
 const GoogleSignIn: React.FC = () => {
     const {signIn, player} = useAuth();
