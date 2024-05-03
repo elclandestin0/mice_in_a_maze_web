@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { db } from "@/hooks/useUnity";
+import { db } from "@/services/firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { Player } from "../types/Player";
 

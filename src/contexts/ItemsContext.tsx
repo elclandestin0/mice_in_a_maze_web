@@ -1,6 +1,6 @@
 // src/contexts/ItemsContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { db } from '../firebase/firebaseConfig';
+import { db } from '@/services/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Item } from '../types/Item';
 
