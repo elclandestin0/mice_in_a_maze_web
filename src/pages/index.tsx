@@ -8,34 +8,22 @@ import {
   VStack,
   Button,
   ChakraProvider,
-  Image,
-  IconButton,
   Spacer,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Play } from "../components/Play";
-import { Discover } from "../components/Discover";
-import { useTheme } from "@chakra-ui/react";
 import SignInModal from "@/components/PlayerModal";
 import { useUnity } from "@/hooks/useUnity";
 import { useAuth } from "@/contexts/AuthContext";
+import { useGame } from "@/contexts/GameContext";
 
 
 export default function Home() {
   const [activeComponent, setActiveComponent] = useState("play");
-  const renderComponent = () => {
-    switch (activeComponent) {
-      case "play":
-        return <Play />;
-      case "buy":
-        return <Text>Discover Component</Text>;
-        return <Discover />;
-      case "discover":
-        return <Discover />;
-      default:
-        return <Text>Welcome to Mice in a Maze!</Text>;
-    }
-  };
+  const { isLoaded } = useUnity();
+  const { sendCommand } = useGame();
+  const { player } = useAuth();
+
+  useEffect(() => { if (isLoaded) console.log("isloaded") }, [player, isLoaded]);
 
   const getButtonStyles = (name: string) => {
     const isActive = activeComponent === name;
@@ -47,6 +35,17 @@ export default function Home() {
       transition: "background-color 0.2s", // Smooth background color transition on hover
     };
   };
+
+  const navigateToPlay = () => {
+    setActiveComponent("play");
+    sendCommand("Canvas", "NavigateToPlay")
+  }
+
+
+  const navigateToDiscover = () => {
+    setActiveComponent("discover");
+    sendCommand("Canvas", "NavigateToDiscover")
+  }
 
   return (
     <ChakraProvider>
@@ -60,14 +59,14 @@ export default function Home() {
           <Flex as="nav" gap="6" ml={8}>
             <Button
               {...getButtonStyles("play")}
-              onClick={() => setActiveComponent("play")}
+              onClick={() => activeComponent === "play" ? {} : navigateToPlay()}
             >
               Play
             </Button>
             <Button
               // isDisabled
               {...getButtonStyles("discover")}
-              onClick={() => setActiveComponent("discover")}
+              onClick={() => activeComponent === "discover" ? {} : navigateToDiscover()}
             >
               Discover
             </Button>
@@ -89,9 +88,9 @@ export default function Home() {
           width="100%"
           height="calc(100vh - 64px)"
         >
-          {renderComponent()}
+          {<Play />}
         </VStack>
       </Box>
-    </ChakraProvider>
+    </ChakraProvider >
   );
 }
