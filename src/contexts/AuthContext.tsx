@@ -1,4 +1,3 @@
-// src/contexts/GoogleAuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -74,14 +73,17 @@ export const AuthProvider: React.FC<GoogleAuthProviderProps> = ({
     const docRef = await getDoc(playerRef);
 
     const playerData: Player = {
-      username: user.displayName ?? "No Name", // Use "No Name" if displayName is null
-      email: user.email ?? "No Email",         // Use "No Email" if email is null
-      lastSignedIn: new Date().toISOString(), // Current time as ISO string
-      metatmaskAddress: "",                   // Empty string for now
-      authToken: user.refreshToken,           // Storing Firebase Auth token
-      equippedItems: [],                      // Initially empty
-      inventory: []                           // Initially empty
+      username: user.displayName ?? "No Name",
+      id: user.uid,
+      email: user.email ?? "No Email",
+      lastSignedIn: new Date().toISOString(),
+      metatmaskAddress: "",
+      authToken: user.refreshToken,
+      equippedItems: [],
+      inventory: [],
+      discoveredItems: []
     };
+
     if (!docRef.exists()) {
       console.log("User not found. Setting new user in Firestore");
       await setDoc(playerRef, playerData).catch(console.error);

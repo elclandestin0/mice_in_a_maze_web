@@ -24,7 +24,7 @@ export function Play() {
     useEffect(() => {
         if (items && Object.keys(items).length > 0) {
             console.log(items);
-            sendMessage("Canvas", "ReceiveItemData", JSON.stringify(items));
+            sendMessage("Canvas", "ReceiveItemData", JSON.stringify({ items: items }));
         }
     }, [items]);
 
