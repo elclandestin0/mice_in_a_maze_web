@@ -15,6 +15,7 @@ export enum CosmeticType {
 }
 
 export interface Item {
+    name: string;
     claimedBy: string[];    // Array of user references who have claimed the item
     collectionAddress: string;  // Presumably a blockchain-related address
     discoveredBy: string[]; // Array of user references who have discovered the item
@@ -22,5 +23,5 @@ export interface Item {
     isUnique: boolean;
     itemType: ItemType;       // Numeric identifier for the type of item
     tokenId: string;        // Identifier likely related to a blockchain token
-
+    assetName: string;
 }

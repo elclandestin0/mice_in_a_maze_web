@@ -5,13 +5,16 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Item } from '../types/Item';
 
 interface ItemsContextType {
+    equippedItems: Item[];
     items: Item[];
     loadClaimedItems: (userIds: string[]) => void;
+    loadAllItems: () => void;
 }
 
 const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
 
 export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [equippedItems, setEquippedItems] = useState<Item[]>([]);
     const [items, setItems] = useState<Item[]>([]);
 
     const loadClaimedItems = async (userIds: string[]) => {
@@ -21,11 +24,23 @@ export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         querySnapshot.forEach((doc) => {
             itemsArray.push(doc.data() as Item);
         });
+        setEquippedItems(itemsArray);
+    };
+
+    const loadAllItems = async () => {
+        const q = collection(db, "items");
+        const querySnapshot = await getDocs(q);
+        const itemsArray: Item[] = [];
+        querySnapshot.forEach((doc) => {
+            itemsArray.push(doc.data() as Item);
+            console.log(doc.data());
+        });
         setItems(itemsArray);
     };
 
+
     return (
-        <ItemsContext.Provider value={{ items, loadClaimedItems }}>
+        <ItemsContext.Provider value={{ equippedItems, items, loadClaimedItems, loadAllItems }}>
             {children}
         </ItemsContext.Provider>
     );

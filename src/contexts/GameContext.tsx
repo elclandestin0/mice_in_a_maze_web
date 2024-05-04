@@ -4,9 +4,11 @@ import React, { createContext, useContext, useState, ReactNode, SetStateAction }
 interface GameContextType {
     gameObjectName: string;
     methodName: string;
-    sendCommand: (gameObjectName: string, methodName: string) => void;
+    objectParameter: string;
+    sendCommand: (gameObjectName: string, methodName: string, objectParameter?: string) => void;
     setGameObjectName: (gameObjectName: string) => void;
-    setMethodName: (gameObjectName: string) => void;
+    setMethodName: (methodName: string) => void;
+    setObjectParameter: (objectParameter: string) => void;
 }
 
 // Create the context with an initial undefined type, then define the default value
@@ -31,15 +33,17 @@ interface GameProviderProps {
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     const [gameObjectName, setGameObjectName] = useState<string>('');
     const [methodName, setMethodName] = useState<string>('');
+    const [objectParameter, setObjectParameter] = useState<string>('');
 
     // Function to update the command, strongly typed
-    const sendCommand = (gameObjectName: string, methodName: string) => {
+    const sendCommand = (gameObjectName: string, methodName: string, objectParameter?: string) => {
         setGameObjectName(gameObjectName);
         setMethodName(methodName);
+        if (objectParameter != null) setObjectParameter(objectParameter);
     };
 
     return (
-        <GameContext.Provider value={{ gameObjectName, methodName, sendCommand, setGameObjectName, setMethodName }}>
+        <GameContext.Provider value={{ gameObjectName, methodName, objectParameter, sendCommand, setGameObjectName, setMethodName, setObjectParameter }}>
             {children}
         </GameContext.Provider>
     );

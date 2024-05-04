@@ -23,7 +23,10 @@ export default function Home() {
   const { sendCommand } = useGame();
   const { player } = useAuth();
 
-  useEffect(() => { if (isLoaded) console.log("isloaded") }, [player, isLoaded]);
+  useEffect(() => {
+    if (isLoaded) console.log("isloaded");
+    if (player != null) console.log("sending item data");
+  }, [player, isLoaded]);
 
   const getButtonStyles = (name: string) => {
     const isActive = activeComponent === name;
