@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@chakra-ui/react';
 import { Unity } from 'react-unity-webgl';
 import { useUnity } from '@/hooks/useUnity';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
 import { useItems } from '@/contexts/ItemsContext';
+import { Item } from '@/types/Item';
 
 export function Play() {
 
-    const { unityProvider, isLoaded, sendMessage } = useUnity();
+    const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems } = useItems();
@@ -20,6 +21,12 @@ export function Play() {
             loadAllItems();
         }
     }, [isLoaded, player]);
+
+
+    const handleDiscoverItem = useCallback((item: any) => {
+        console.log("Found the item: ", item.name);
+    }, []);
+
 
     useEffect(() => {
         if (items && Object.keys(items).length > 0) {
@@ -37,10 +44,16 @@ export function Play() {
         }
     }, [gameObjectName, methodName, objectParameter]); // Dependencies that trigger this effect
 
+    useEffect(() => {
+        addEventListener("DiscoverItem", handleDiscoverItem);
+        return () => {
+            removeEventListener("DiscoverItem", handleDiscoverItem);
+        };
+    }, [addEventListener, removeEventListener, handleDiscoverItem]);
 
     return (
         <>
-            <Unity unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
+            <Unity unityProvider={unityProvider} style={{ width: '90%', height: '90%' }} />
             {/* <Button p={5} colorScheme='teal' onClick={handleClickEnterFullscreen}>Enter Fullscreen</Button> */}
         </>
     );
