@@ -24,14 +24,14 @@ export function Play() {
 
 
     const handleDiscoverItem = useCallback((item: any) => {
-        console.log("Found the item: ", item.name);
+        console.log(item);
     }, []);
 
 
     useEffect(() => {
         if (items && Object.keys(items).length > 0) {
             console.log(items);
-            sendMessage("Canvas", "ReceiveItemData", JSON.stringify({ items: items }));
+            sendMessage("ItemsManager", "ReceiveItemData", JSON.stringify({ items: items }));
         }
     }, [items]);
 
