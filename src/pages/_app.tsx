@@ -5,6 +5,7 @@ import { MetaMaskProvider } from '@/contexts/MetaMaskContext';
 import { GameProvider } from '@/contexts/GameContext';
 import Head from 'next/head';
 import { ItemsProvider } from '@/contexts/ItemsContext';
+import { PlayerProvider } from '@/contexts/PlayerContext';
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
@@ -16,9 +17,11 @@ export default function App({ Component, pageProps }: AppProps) {
                 <GameProvider>
                     <MetaMaskProvider>
                         <AuthProvider>
-                            <ItemsProvider>
-                                <Component {...pageProps} />
-                            </ItemsProvider>
+                            <PlayerProvider>
+                                <ItemsProvider>
+                                    <Component {...pageProps} />
+                                </ItemsProvider>
+                            </PlayerProvider>
                         </AuthProvider>
                     </MetaMaskProvider>
                 </GameProvider>

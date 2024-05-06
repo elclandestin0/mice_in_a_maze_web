@@ -7,38 +7,36 @@ import React, {
   ReactNode,
 } from "react";
 import { db } from "@/services/firebase";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { Player } from "../types/Player";
+import { useAuth } from "./AuthContext";
 
 interface PlayerContextType {
-  player: Player | null;
-  discoverItem: (itemId: string) => Promise<void>;
-  equipCosmetic: (itemId: string) => Promise<void>;
+  discoverItem: (itemId: string, player: Player | null) => Promise<void>;
+  equipCosmetic: (itemId: string, player: Player | null) => Promise<void>;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 export const PlayerProvider: React.FC<{
   children: ReactNode;
-  player: Player | null;
-}> = ({ children, player }) => {
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(player);
+}> = ({ children }) => {
 
-  useEffect(() => {
-    setCurrentPlayer(player);
-  }, [player]);
 
-  const discoverItem = async (itemId: string) => {
-    if (!currentPlayer) return;
-    const playerRef = doc(db, "players", currentPlayer.email); // Assuming email as a unique identifier
+  const discoverItem = async (itemId: string, player: Player | null) => {
+    console.log(player);
+    if (!player) return;
+    const playerRef = doc(db, "players", player.id);
     await updateDoc(playerRef, {
-      inventory: arrayUnion(itemId),
+      discoveredItems: arrayUnion(itemId),
+    }).then((x) => {
+      console.log(x);
     });
   };
 
-  const equipCosmetic = async (itemId: string) => {
-    if (!currentPlayer) return;
-    const playerRef = doc(db, "players", currentPlayer.email);
+  const equipCosmetic = async (itemId: string, player: Player | null) => {
+    if (!player) return;
+    const playerRef = doc(db, "players", player.id);
     await updateDoc(playerRef, {
       equippedItems: arrayUnion(itemId),
     });
@@ -46,7 +44,7 @@ export const PlayerProvider: React.FC<{
 
   return (
     <PlayerContext.Provider
-      value={{ player: currentPlayer, discoverItem, equipCosmetic }}
+      value={{ discoverItem, equipCosmetic }}
     >
       {children}
     </PlayerContext.Provider>

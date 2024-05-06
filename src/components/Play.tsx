@@ -5,6 +5,7 @@ import { useUnity } from '@/hooks/useUnity';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
 import { useItems } from '@/contexts/ItemsContext';
+import { usePlayer } from '@/contexts/PlayerContext';
 import { Item } from '@/types/Item';
 
 export function Play() {
@@ -13,6 +14,7 @@ export function Play() {
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems } = useItems();
+    const { discoverItem } = usePlayer();
 
     useEffect(() => {
         console.log("Unity is loaded: ", isLoaded);
@@ -24,8 +26,11 @@ export function Play() {
 
 
     const handleDiscoverItem = useCallback((item: any) => {
-        console.log(item);
-    }, []);
+        // to-do: sanitize the shit out of this
+        const itemObject = item as Item;
+        console.log(player);
+        discoverItem(itemObject.id, player);
+    }, [player]);
 
 
     useEffect(() => {
