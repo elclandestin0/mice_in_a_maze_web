@@ -9,12 +9,14 @@ import {
   Button,
   ChakraProvider,
   Spacer,
+  Badge
 } from "@chakra-ui/react";
 import { Play } from "../components/Play";
 import SignInModal from "@/components/PlayerModal";
 import { useUnity } from "@/hooks/useUnity";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGame } from "@/contexts/GameContext";
+import { useItems } from "@/contexts/ItemsContext";
 
 
 export default function Home() {
@@ -22,6 +24,7 @@ export default function Home() {
   const { isLoaded } = useUnity();
   const { sendCommand } = useGame();
   const { player } = useAuth();
+  const { hasNewDiscoveries, setHasNewDiscoveries } = useItems();
 
   useEffect(() => {
     if (isLoaded) console.log("isloaded");
@@ -69,9 +72,12 @@ export default function Home() {
             <Button
               // isDisabled
               {...getButtonStyles("discover")}
-              onClick={() => activeComponent === "discover" ? {} : navigateToDiscover()}
+              onClick={() => {
+                activeComponent === "discover" ? {} : navigateToDiscover();
+                setHasNewDiscoveries(false);
+              }}
             >
-              Discover
+              Discover {hasNewDiscoveries && <Badge colorScheme='red'>New</Badge>}
             </Button>
             <Button
               isDisabled

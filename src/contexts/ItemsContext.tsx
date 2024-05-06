@@ -8,9 +8,11 @@ import { Player } from '@/types/Player';
 interface ItemsContextType {
     equippedItems: Item[];
     items: Item[];
+    hasNewDiscoveries: boolean;
     loadClaimedItems: (userIds: string[]) => void;
     loadAllItems: () => void;
     updateDiscoveredBy: (itemId: string, player: Player | null) => void;
+    setHasNewDiscoveries: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
@@ -18,6 +20,7 @@ const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
 export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [equippedItems, setEquippedItems] = useState<Item[]>([]);
     const [items, setItems] = useState<Item[]>([]);
+    const [hasNewDiscoveries, setHasNewDiscoveries] = useState(false);
 
     const loadClaimedItems = async (userIds: string[]) => {
         const q = query(collection(db, "items"), where("claimedBy", "array-contains-any", userIds));
@@ -45,12 +48,14 @@ export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         const itemRef = doc(db, "items", itemId);
         await updateDoc(itemRef, {
             discoveredBy: arrayUnion(player.id),
+        }).then(() => {
+            setHasNewDiscoveries(true);
         });
     }
 
 
     return (
-        <ItemsContext.Provider value={{ equippedItems, items, loadClaimedItems, loadAllItems, updateDiscoveredBy }}>
+        <ItemsContext.Provider value={{ equippedItems, items, hasNewDiscoveries, loadClaimedItems, loadAllItems, updateDiscoveredBy, setHasNewDiscoveries }}>
             {children}
         </ItemsContext.Provider>
     );
