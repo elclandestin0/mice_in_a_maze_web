@@ -1,14 +1,16 @@
 // src/contexts/ItemsContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { db } from '@/services/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { Item } from '../types/Item';
+import { Player } from '@/types/Player';
 
 interface ItemsContextType {
     equippedItems: Item[];
     items: Item[];
     loadClaimedItems: (userIds: string[]) => void;
     loadAllItems: () => void;
+    updateDiscoveredBy: (itemId: string, player: Player | null) => void;
 }
 
 const ItemsContext = createContext<ItemsContextType | undefined>(undefined);
@@ -38,9 +40,17 @@ export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setItems(itemsArray);
     };
 
+    const updateDiscoveredBy = async (itemId: string, player: Player | null) => {
+        if (!player) return;
+        const itemRef = doc(db, "items", itemId);
+        await updateDoc(itemRef, {
+            discoveredBy: arrayUnion(player.id),
+        });
+    }
+
 
     return (
-        <ItemsContext.Provider value={{ equippedItems, items, loadClaimedItems, loadAllItems }}>
+        <ItemsContext.Provider value={{ equippedItems, items, loadClaimedItems, loadAllItems, updateDiscoveredBy }}>
             {children}
         </ItemsContext.Provider>
     );

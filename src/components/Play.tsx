@@ -13,7 +13,7 @@ export function Play() {
     const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
-    const { items, loadAllItems } = useItems();
+    const { items, loadAllItems, updateDiscoveredBy } = useItems();
     const { discoverItem } = usePlayer();
 
     useEffect(() => {
@@ -30,6 +30,7 @@ export function Play() {
         const itemObject = item as Item;
         console.log(player);
         discoverItem(itemObject.id, player);
+        updateDiscoveredBy(itemObject.id, player);
     }, [player]);
 
 
