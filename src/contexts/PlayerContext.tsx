@@ -7,7 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import { db } from "@/services/firebase";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 import { Player } from "../types/Player";
 import { useAuth } from "./AuthContext";
 
@@ -32,7 +32,7 @@ export const PlayerProvider: React.FC<{
     await updateDoc(playerRef, {
       discoveredItems: arrayUnion(itemId),
     }).then((x) => {
-      console.log(x);
+      getDoc(playerRef).then(x => console.log(x.data()));
     });
   };
 
