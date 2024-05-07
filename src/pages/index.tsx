@@ -44,13 +44,13 @@ export default function Home() {
 
   const navigateToPlay = () => {
     setActiveComponent("play");
-    sendCommand("Canvas", "NavigateToPlay")
+    sendCommand("CanvasMain", "NavigateToPlay")
   }
 
 
   const navigateToDiscover = () => {
     setActiveComponent("discover");
-    sendCommand("Canvas", "NavigateToDiscover")
+    sendCommand("CanvasMain", "NavigateToDiscover")
   }
 
   return (

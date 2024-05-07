@@ -14,7 +14,7 @@ export function Play() {
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems, updateDiscoveredBy } = useItems();
-    const { discoverItem } = usePlayer();
+    const { discoverItem, equipCosmetic, unequipCosmetic } = usePlayer();
 
     useEffect(() => {
         console.log("Unity is loaded: ", isLoaded);
@@ -24,22 +24,13 @@ export function Play() {
         }
     }, [isLoaded, player]);
 
-
-    const handleDiscoverItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
-        const itemObject = item as Item;
-        console.log(player);
-        discoverItem(itemObject.id, player);
-        updateDiscoveredBy(itemObject.id, player);
-    }, [player]);
-
-
     useEffect(() => {
         if (items && Object.keys(items).length > 0) {
             console.log(items);
             sendMessage("ItemsManager", "ReceiveItemData", JSON.stringify({ items: items }));
         }
     }, [items]);
+
 
     useEffect(() => {
         if (gameObjectName !== "" && methodName !== "") {
@@ -50,12 +41,43 @@ export function Play() {
         }
     }, [gameObjectName, methodName, objectParameter]); // Dependencies that trigger this effect
 
+
+    const handleDiscoverItem = useCallback((item: any) => {
+        // to-do: sanitize the shit out of this
+        const itemObject = JSON.parse(item) as Item;
+        discoverItem(itemObject.id, player);
+        updateDiscoveredBy(itemObject.id, player);
+    }, [player]);
+
+
     useEffect(() => {
         addEventListener("DiscoverItem", handleDiscoverItem);
+        addEventListener("EquipItem", handleEquipItem);
+        addEventListener("UnequipItem", handleUnequipItem);
         return () => {
             removeEventListener("DiscoverItem", handleDiscoverItem);
+            removeEventListener("EquipItem", handleEquipItem);
+            removeEventListener("UnequipItem", handleUnequipItem);
         };
     }, [addEventListener, removeEventListener, handleDiscoverItem]);
+
+
+    const handleEquipItem = useCallback((item: any) => {
+        // to-do: sanitize the shit out of this
+        const itemObject = JSON.parse(item) as Item;
+        console.log(itemObject);
+        equipCosmetic(itemObject.id, player);
+    }, [player]);
+
+    const handleUnequipItem = useCallback((item: any) => {
+        // to-do: sanitize the shit out of this
+        const itemObject = JSON.parse(item) as Item;
+        console.log(itemObject);
+        unequipCosmetic(itemObject.id, player);
+    }, [player]);
+
+
+
 
     return (
         <>

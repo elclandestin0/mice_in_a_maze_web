@@ -7,13 +7,15 @@ import React, {
   ReactNode,
 } from "react";
 import { db } from "@/services/firebase";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { Player } from "../types/Player";
 import { useAuth } from "./AuthContext";
 
 interface PlayerContextType {
   discoverItem: (itemId: string, player: Player | null) => Promise<void>;
   equipCosmetic: (itemId: string, player: Player | null) => Promise<void>;
+  unequipCosmetic: (itemId: string, player: Player | null) => Promise<void>;
+
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -37,14 +39,25 @@ export const PlayerProvider: React.FC<{
   const equipCosmetic = async (itemId: string, player: Player | null) => {
     if (!player) return;
     const playerRef = doc(db, "players", player.id);
+    console.log(itemId);
     await updateDoc(playerRef, {
-      equippedItems: arrayUnion(itemId),
+      equippedItems: arrayUnion(itemId)
     });
   };
 
+  const unequipCosmetic = async (itemId: string, player: Player | null) => {
+    if (!player) return;
+    const playerRef = doc(db, "players", player.id);
+    console.log(itemId);
+    await updateDoc(playerRef, {
+      equippedItems: arrayRemove(itemId),
+    });
+  };
+
+
   return (
     <PlayerContext.Provider
-      value={{ discoverItem, equipCosmetic }}
+      value={{ discoverItem, equipCosmetic, unequipCosmetic }}
     >
       {children}
     </PlayerContext.Provider>
