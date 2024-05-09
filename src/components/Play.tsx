@@ -47,6 +47,7 @@ export function Play() {
         const itemObject = JSON.parse(item) as Item;
         discoverItem(itemObject.id, player);
         updateDiscoveredBy(itemObject.id, player);
+        loadAllItems();
     }, [player]);
 
 
