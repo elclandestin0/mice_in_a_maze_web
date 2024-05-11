@@ -22,6 +22,7 @@ export interface Item {
     discoveredBy: string[]; // Array of user references who have discovered the item
     isDiscoverable: boolean;
     isUnique: boolean;
+    isToken: boolean;
     itemType: ItemType;       // Numeric identifier for the type of item
     tokenId: string;        // Identifier likely related to a blockchain token
     assetName: string;
