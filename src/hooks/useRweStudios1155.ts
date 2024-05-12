@@ -1,19 +1,21 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useContract } from './useContract';
 import RweStudios from '@/utils/abis/RweStudios1155.json'; // Adjust the path as necessary
 import { contractAddresses } from '@/utils/contractAddresses'; // Assuming this includes your SharpshooterPass contract address
 
 export const useRweStudios1155 = (account: string) => {
-    const contractAddress = contractAddresses.sharpshooterPass;
+    const contractAddress = contractAddresses.rweStudios1155;
+    let rweStudios1155: any;
+    let signer: any;
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner(); // Ensure you're connected to a wallet
+    useEffect(() => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+        signer = provider.getSigner(); // Ensure you're connected to a wallet3
+    })
 
     // Get the contract instance with a signer for minting
-    const rweStudios1155 = useContract(contractAddress, RweStudios.abi, signer);
-
-
+    rweStudios1155 = useContract(contractAddress, RweStudios.abi, signer);
     // Function to mint an NFT
     const enhance = useCallback(async (proof: string, tokenId: string) => {
         if (rweStudios1155) {

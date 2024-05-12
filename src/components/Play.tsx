@@ -88,7 +88,9 @@ export function Play() {
         if (account == null) {
             connectWallet();
         } else {
-            enhance(item.proof, "1");
+            const itemObject = JSON.parse(item) as Item;
+            console.log(itemObject);
+            // enhance(item.proof, "1");
         }
     }, [player]);
 

@@ -1,5 +1,5 @@
-import {ethers} from 'ethers';
-import {useMemo} from 'react';
+import { ethers } from 'ethers';
+import { useMemo } from 'react';
 
 export const useContract = (address, ABI, signerOrProvider) => {
     const contract = useMemo(() => {
