@@ -9,6 +9,7 @@ import { usePlayer } from '@/contexts/PlayerContext';
 import { Item } from '@/types/Item';
 import { useRweStudios1155 } from '@/hooks/useRweStudios1155';
 import { useMetaMask } from '@/contexts/MetaMaskContext';
+import { ReactUnityEventParameter } from 'react-unity-webgl/distribution/types/react-unity-event-parameters';
 
 export function Play() {
 
@@ -90,12 +91,11 @@ export function Play() {
         } else {
             const itemObject = JSON.parse(item) as Item;
             console.log(itemObject);
-            // enhance(item.proof, "1");
+            enhance(itemObject.proof, "1")
+                .then(() => console.log("Item enhanced successfully"))
+                .catch(error => console.error("Failed to enhance item:", error));
         }
     }, [player]);
-
-
-
 
     return (
         <>

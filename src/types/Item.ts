@@ -17,14 +17,14 @@ export enum CosmeticType {
 export interface Item {
     name: string;
     id: string;
-    claimedBy: string[];    // Array of user references who have claimed the item
-    contractAddress: string;  // Presumably a blockchain-related address
-    discoveredBy: string[]; // Array of user references who have discovered the item
+    claimedBy: string[];
+    contractAddress: string;
+    discoveredBy: string[];
     isDiscoverable: boolean;
     isUnique: boolean;
     isToken: boolean;
-    itemType: ItemType;       // Numeric identifier for the type of item
-    tokenId: string;        // Identifier likely related to a blockchain token
+    itemType: ItemType;
+    tokenId: string;
     assetName: string;
     proof: string;
 }
