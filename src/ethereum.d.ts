@@ -1,4 +1,4 @@
-// src/unity.d.ts
+
 declare global {
     interface Window {
         ethereum?: {

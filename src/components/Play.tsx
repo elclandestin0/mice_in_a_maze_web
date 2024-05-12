@@ -7,6 +7,8 @@ import { useGame } from '@/contexts/GameContext';
 import { useItems } from '@/contexts/ItemsContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { Item } from '@/types/Item';
+import { useRweStudios1155 } from '@/hooks/useRweStudios1155';
+import { useMetaMask } from '@/contexts/MetaMaskContext';
 
 export function Play() {
 
@@ -15,6 +17,8 @@ export function Play() {
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems, updateDiscoveredBy } = useItems();
     const { discoverItem, equipCosmetic, unequipCosmetic } = usePlayer();
+    const { account, connectWallet } = useMetaMask();
+    const { enhance } = useRweStudios1155(account ? account as string : "")
 
     useEffect(() => {
         console.log("Unity is loaded: ", isLoaded);
@@ -55,10 +59,12 @@ export function Play() {
         addEventListener("DiscoverItem", handleDiscoverItem);
         addEventListener("EquipItem", handleEquipItem);
         addEventListener("UnequipItem", handleUnequipItem);
+        addEventListener("EnhanceItem", handleEnhanceItem);
         return () => {
             removeEventListener("DiscoverItem", handleDiscoverItem);
             removeEventListener("EquipItem", handleEquipItem);
             removeEventListener("UnequipItem", handleUnequipItem);
+            removeEventListener("EnhanceItem", handleEnhanceItem);
         };
     }, [addEventListener, removeEventListener, handleDiscoverItem]);
 
@@ -75,6 +81,15 @@ export function Play() {
         const itemObject = JSON.parse(item) as Item;
         console.log(itemObject);
         unequipCosmetic(itemObject.id, player);
+    }, [player]);
+
+    const handleEnhanceItem = useCallback((item: any) => {
+        // to-do: sanitize the shit out of this
+        if (account == null) {
+            connectWallet();
+        } else {
+            enhance(item.proof, "1");
+        }
     }, [player]);
 
 

@@ -19,6 +19,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-three/fiber": "^8.16.2",
     "@types/three": "^0.164.0",
+    "ethers": "^5.0.0",
     "firebase": "^10.11.1",
     "firebaseui": "^6.1.0",
     "framer-motion": "^11.1.7",
