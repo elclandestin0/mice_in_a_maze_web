@@ -15,6 +15,7 @@ interface PlayerContextType {
   discoverItem: (itemId: string, player: Player | null) => Promise<void>;
   equipCosmetic: (itemId: string, player: Player | null) => Promise<void>;
   unequipCosmetic: (itemId: string, player: Player | null) => Promise<void>;
+  updateInventory: (itemId: string, player: Player | null) => Promise<void>;
 
 }
 
@@ -54,10 +55,18 @@ export const PlayerProvider: React.FC<{
     });
   };
 
+  const updateInventory = async (itemId: string, player: Player | null) => {
+    if (!player) return;
+    const playerRef = doc(db, "players", player.id);
+    await updateDoc(playerRef, {
+      inventory: arrayUnion(itemId),
+    });
+  };
+
 
   return (
     <PlayerContext.Provider
-      value={{ discoverItem, equipCosmetic, unequipCosmetic }}
+      value={{ discoverItem, equipCosmetic, unequipCosmetic, updateInventory }}
     >
       {children}
     </PlayerContext.Provider>

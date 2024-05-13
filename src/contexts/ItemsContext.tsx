@@ -12,6 +12,7 @@ interface ItemsContextType {
     loadClaimedItems: (userIds: string[]) => void;
     loadAllItems: () => void;
     updateDiscoveredBy: (itemId: string, player: Player | null) => void;
+    updateClaimedBy: (itemId: string, player: Player | null) => void;
     setHasNewDiscoveries: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -54,8 +55,17 @@ export const ItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
 
 
+    const updateClaimedBy = async (itemId: string, player: Player | null) => {
+        if (!player) return;
+        const itemRef = doc(db, "items", itemId);
+        await updateDoc(itemRef, {
+            claimedBy: arrayUnion(player.id),
+        });
+    }
+
+
     return (
-        <ItemsContext.Provider value={{ equippedItems, items, hasNewDiscoveries, loadClaimedItems, loadAllItems, updateDiscoveredBy, setHasNewDiscoveries }}>
+        <ItemsContext.Provider value={{ equippedItems, items, hasNewDiscoveries, loadClaimedItems, loadAllItems, updateDiscoveredBy, updateClaimedBy, setHasNewDiscoveries }}>
             {children}
         </ItemsContext.Provider>
     );

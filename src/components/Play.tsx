@@ -9,13 +9,13 @@ import { usePlayer } from '@/contexts/PlayerContext';
 import { Item } from '@/types/Item';
 import useRweStudios1155 from '@/hooks/useRweStudios1155';
 import { useMetaMask } from '@/contexts/MetaMaskContext';
-export function Play() {
 
+export function Play() {
     const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
-    const { items, loadAllItems, updateDiscoveredBy } = useItems();
-    const { discoverItem, equipCosmetic, unequipCosmetic } = usePlayer();
+    const { items, loadAllItems, updateDiscoveredBy, updateClaimedBy } = useItems();
+    const { discoverItem, equipCosmetic, unequipCosmetic, updateInventory } = usePlayer();
     const { account, connectWallet } = useMetaMask();
     const { enhance } = useRweStudios1155();
 
@@ -31,14 +31,12 @@ export function Play() {
     const handleEquipItem = useCallback((item: any) => {
         // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
-        console.log(itemObject);
         equipCosmetic(itemObject.id, player);
     }, [player]);
 
     const handleUnequipItem = useCallback((item: any) => {
         // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
-        console.log(itemObject);
         unequipCosmetic(itemObject.id, player);
     }, [player]);
 
@@ -48,8 +46,11 @@ export function Play() {
             connectWallet();
         } else {
             const itemObject = JSON.parse(item) as Item;
-            console.log(itemObject);
-            enhance(itemObject.proof, "1");
+            enhance(itemObject.proof, "1").then(() => {
+                updateClaimedBy(itemObject.id, player);
+                updateInventory(itemObject.id, player);
+                loadAllItems();
+            });
         }
     }, [player]);
 
@@ -97,7 +98,7 @@ export function Play() {
 
     return (
         <>
-            <Unity unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
+            <Unity unityProvider={unityProvider} style={{ width: '100%', height: '100%' }} />
         </>
     );
 }
