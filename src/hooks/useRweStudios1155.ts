@@ -1,33 +1,27 @@
-import { useCallback, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { useContract } from './useContract';
-import RweStudios from '@/utils/abis/RweStudios1155.json'; // Adjust the path as necessary
-import { contractAddresses } from '@/utils/contractAddresses'; // Assuming this includes your SharpshooterPass contract address
+import { useCallback } from 'react';
+import { useContract } from './useContract'; // Import your useContracts hook
+import { useMetaMask } from '@/contexts/MetaMaskContext';
 
-export const useRweStudios1155 = (account: string) => {
-    const contractAddress = contractAddresses.rweStudios1155;
-    let rweStudios1155: any;
-    let signer: any;
+const useRweStudios1155 = () => {
+    const { rweStudios1155 } = useContract();
+    const { account } = useMetaMask(); // Get the current account from MetaMask
 
-    useEffect(() => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-        signer = provider.getSigner(); // Ensure you're connected to a wallet3
-    })
-
-    // Get the contract instance with a signer for minting
-    rweStudios1155 = useContract(contractAddress, RweStudios.abi, signer);
-    // Function to mint an NFT
-    const enhance = useCallback(async (proof: string, tokenId: string) => {
-        if (rweStudios1155) {
-            try {
-                const tx = await rweStudios1155.enhance(tokenId, proof);
-                await tx.wait();
-                console.log("NFT minted successfully");
-            } catch (error) {
-                console.error("Failed to mint NFT:", error);
-            }
+    const enhance = useCallback(async (proof: any, tokenId: any) => {
+        if (!rweStudios1155) {
+            console.error("Contract not initialized or invalid parameters.");
+            return;
         }
-    }, [rweStudios1155]);
+
+        try {
+            const transaction = await rweStudios1155.enhance(proof, tokenId);
+            await transaction.wait(); // Wait for the transaction to be mined
+            console.log('Claimed successfully');
+        } catch (err) {
+            console.error('Error claiming:', err);
+        }
+    }, [rweStudios1155, account]);
 
     return { enhance };
 };
+
+export default useRweStudios1155;

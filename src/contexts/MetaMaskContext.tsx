@@ -22,13 +22,9 @@ interface IMetaMaskContext {
 const MetaMaskContext = createContext<IMetaMaskContext>({
     isConnected: false,
     account: null,
-    connectWallet: async () => {
-    },
-    signIn: async () => {
-    },
+    connectWallet: async () => { },
+    signIn: async () => { },
     linkToGoogle: async (): Promise<MetamaskAccountParams> => {
-        // To fulfill the promise type, provide a dummy MetamaskAccountParams object
-        // Adjust this based on how you plan to handle this in your application
         return {
             account: '',
             message: '',

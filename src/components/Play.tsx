@@ -7,10 +7,8 @@ import { useGame } from '@/contexts/GameContext';
 import { useItems } from '@/contexts/ItemsContext';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { Item } from '@/types/Item';
-import { useRweStudios1155 } from '@/hooks/useRweStudios1155';
+import useRweStudios1155 from '@/hooks/useRweStudios1155';
 import { useMetaMask } from '@/contexts/MetaMaskContext';
-import { ReactUnityEventParameter } from 'react-unity-webgl/distribution/types/react-unity-event-parameters';
-
 export function Play() {
 
     const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
@@ -19,32 +17,7 @@ export function Play() {
     const { items, loadAllItems, updateDiscoveredBy } = useItems();
     const { discoverItem, equipCosmetic, unequipCosmetic } = usePlayer();
     const { account, connectWallet } = useMetaMask();
-    const { enhance } = useRweStudios1155(account ? account as string : "")
-
-    useEffect(() => {
-        console.log("Unity is loaded: ", isLoaded);
-        if (isLoaded && player) {
-            sendMessage("PlayerManager", "LoadPlayerData", JSON.stringify(player));
-            loadAllItems();
-        }
-    }, [isLoaded, player]);
-
-    useEffect(() => {
-        if (items && Object.keys(items).length > 0) {
-            console.log(items);
-            sendMessage("ItemsManager", "ReceiveItemData", JSON.stringify({ items: items }));
-        }
-    }, [items]);
-
-
-    useEffect(() => {
-        if (gameObjectName !== "" && methodName !== "") {
-            sendMessage(gameObjectName, methodName, objectParameter);
-            setGameObjectName("");
-            setMethodName("");
-            setObjectParameter("");
-        }
-    }, [gameObjectName, methodName, objectParameter]); // Dependencies that trigger this effect
+    const { enhance } = useRweStudios1155();
 
 
     const handleDiscoverItem = useCallback((item: any) => {
@@ -54,21 +27,6 @@ export function Play() {
         updateDiscoveredBy(itemObject.id, player);
         loadAllItems();
     }, [player]);
-
-
-    useEffect(() => {
-        addEventListener("DiscoverItem", handleDiscoverItem);
-        addEventListener("EquipItem", handleEquipItem);
-        addEventListener("UnequipItem", handleUnequipItem);
-        addEventListener("EnhanceItem", handleEnhanceItem);
-        return () => {
-            removeEventListener("DiscoverItem", handleDiscoverItem);
-            removeEventListener("EquipItem", handleEquipItem);
-            removeEventListener("UnequipItem", handleUnequipItem);
-            removeEventListener("EnhanceItem", handleEnhanceItem);
-        };
-    }, [addEventListener, removeEventListener, handleDiscoverItem]);
-
 
     const handleEquipItem = useCallback((item: any) => {
         // to-do: sanitize the shit out of this
@@ -91,16 +49,55 @@ export function Play() {
         } else {
             const itemObject = JSON.parse(item) as Item;
             console.log(itemObject);
-            enhance(itemObject.proof, "1")
-                .then(() => console.log("Item enhanced successfully"))
-                .catch(error => console.error("Failed to enhance item:", error));
+            enhance(itemObject.proof, "1");
         }
     }, [player]);
 
+    useEffect(() => {
+        addEventListener("DiscoverItem", handleDiscoverItem);
+        addEventListener("EquipItem", handleEquipItem);
+        addEventListener("UnequipItem", handleUnequipItem);
+        addEventListener("EnhanceItem", handleEnhanceItem);
+        return () => {
+            removeEventListener("DiscoverItem", handleDiscoverItem);
+            removeEventListener("EquipItem", handleEquipItem);
+            removeEventListener("UnequipItem", handleUnequipItem);
+            removeEventListener("EnhanceItem", handleEnhanceItem);
+        };
+    }, [addEventListener,
+        removeEventListener,
+        handleDiscoverItem,
+        handleEquipItem,
+        handleUnequipItem,
+        handleEnhanceItem]);
+
+    useEffect(() => {
+        console.log("Unity is loaded: ", isLoaded);
+        if (isLoaded && player) {
+            sendMessage("PlayerManager", "LoadPlayerData", JSON.stringify(player));
+            loadAllItems();
+        }
+    }, [isLoaded, player]);
+
+    useEffect(() => {
+        if (items && Object.keys(items).length > 0) {
+            console.log(items);
+            sendMessage("ItemsManager", "ReceiveItemData", JSON.stringify({ items: items }));
+        }
+    }, [items]);
+
+    useEffect(() => {
+        if (gameObjectName !== "" && methodName !== "") {
+            sendMessage(gameObjectName, methodName, objectParameter);
+            setGameObjectName("");
+            setMethodName("");
+            setObjectParameter("");
+        }
+    }, [gameObjectName, methodName, objectParameter]); // Dependencies that trigger this effect
+
     return (
         <>
-            <Unity unityProvider={unityProvider} style={{ width: '90%', height: '90%' }} />
-            {/* <Button p={5} colorScheme='teal' onClick={handleClickEnterFullscreen}>Enter Fullscreen</Button> */}
+            <Unity unityProvider={unityProvider} style={{ width: '75%', height: '75%' }} />
         </>
     );
 }

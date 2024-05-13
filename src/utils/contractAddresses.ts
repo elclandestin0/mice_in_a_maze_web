@@ -1,3 +1,1 @@
-export const contractAddresses = {
-    rweStudios1155: "0x6F508B4DE0369F5A7fBaa02a8ae465Da5BBF3d9Ea5BBF3d9E",
-};
+export const rweStudios1155Address = "0x6f508b4de0369f5a7fbaa02a8ae465da5bbf3d9e";
