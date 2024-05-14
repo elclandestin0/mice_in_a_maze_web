@@ -1,1 +1,1 @@
-export const rweStudios1155Address = "0xf0b5f8f8e6ddd14084c480544b02a99f15c5f5b3";
+export const rweStudios1155Address = "0xbcb91e4f3bfdb02a181fdf8cde996a1835f3c017";  
