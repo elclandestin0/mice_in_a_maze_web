@@ -5,10 +5,12 @@ interface GameContextType {
     gameObjectName: string;
     methodName: string;
     objectParameter: string;
+    gameStarted: boolean;
     sendCommand: (gameObjectName: string, methodName: string, objectParameter?: string) => void;
     setGameObjectName: (gameObjectName: string) => void;
     setMethodName: (methodName: string) => void;
     setObjectParameter: (objectParameter: string) => void;
+    setGameStarted: (gameStarted: boolean) => void;
 }
 
 // Create the context with an initial undefined type, then define the default value
@@ -34,6 +36,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     const [gameObjectName, setGameObjectName] = useState<string>('');
     const [methodName, setMethodName] = useState<string>('');
     const [objectParameter, setObjectParameter] = useState<string>('');
+    const [gameStarted, setGameStarted] = useState<boolean>(false);
 
     // Function to update the command, strongly typed
     const sendCommand = (gameObjectName: string, methodName: string, objectParameter?: string) => {
@@ -43,7 +46,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     };
 
     return (
-        <GameContext.Provider value={{ gameObjectName, methodName, objectParameter, sendCommand, setGameObjectName, setMethodName, setObjectParameter }}>
+        <GameContext.Provider value={{ gameObjectName, methodName, objectParameter, gameStarted, sendCommand, setGameObjectName, setMethodName, setObjectParameter, setGameStarted }}>
             {children}
         </GameContext.Provider>
     );

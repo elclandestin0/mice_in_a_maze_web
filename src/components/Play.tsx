@@ -13,7 +13,7 @@ import { useMetaMask } from '@/contexts/MetaMaskContext';
 export function Play() {
     const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
     const { player } = useAuth();
-    const { gameObjectName, methodName, objectParameter, setMethodName, setGameObjectName, setObjectParameter } = useGame();
+    const { gameObjectName, methodName, objectParameter, setGameStarted, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems, updateDiscoveredBy, updateClaimedBy } = useItems();
     const { discoverItem, equipCosmetic, unequipCosmetic, updateInventory } = usePlayer();
     const { account, connectWallet } = useMetaMask();
@@ -54,16 +54,26 @@ export function Play() {
         }
     }, [player]);
 
+    const handleStartGame = useCallback(() => {
+        setGameStarted(true);
+    }, [])
+
+    const handleEndGame = useCallback(() => {
+        setGameStarted(false);
+    }, [])
+
     useEffect(() => {
         addEventListener("DiscoverItem", handleDiscoverItem);
         addEventListener("EquipItem", handleEquipItem);
         addEventListener("UnequipItem", handleUnequipItem);
         addEventListener("EnhanceItem", handleEnhanceItem);
+        addEventListener("StartGame", handleStartGame);
         return () => {
             removeEventListener("DiscoverItem", handleDiscoverItem);
             removeEventListener("EquipItem", handleEquipItem);
             removeEventListener("UnequipItem", handleUnequipItem);
             removeEventListener("EnhanceItem", handleEnhanceItem);
+            removeEventListener("StartGame", handleStartGame);
         };
     }, [addEventListener,
         removeEventListener,

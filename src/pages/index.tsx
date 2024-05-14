@@ -22,7 +22,7 @@ import { useItems } from "@/contexts/ItemsContext";
 export default function Home() {
   const [activeComponent, setActiveComponent] = useState("play");
   const { isLoaded } = useUnity();
-  const { sendCommand } = useGame();
+  const { sendCommand, gameStarted } = useGame();
   const { player } = useAuth();
   const { hasNewDiscoveries, setHasNewDiscoveries } = useItems();
 
@@ -70,7 +70,7 @@ export default function Home() {
               Play
             </Button>
             <Button
-              // isDisabled
+              isDisabled={gameStarted ? true : false}
               {...getButtonStyles("discover")}
               onClick={() => {
                 activeComponent === "discover" ? {} : navigateToDiscover();
