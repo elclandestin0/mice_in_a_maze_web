@@ -9,7 +9,8 @@ import {
   Button,
   ChakraProvider,
   Spacer,
-  Badge
+  Badge,
+  Tooltip
 } from "@chakra-ui/react";
 import { Play } from "../components/Play";
 import SignInModal from "@/components/PlayerModal";
@@ -69,23 +70,29 @@ export default function Home() {
             >
               Play
             </Button>
-            <Button
-              isDisabled={gameStarted ? true : false}
-              {...getButtonStyles("discover")}
-              onClick={() => {
-                activeComponent === "discover" ? {} : navigateToDiscover();
-                setHasNewDiscoveries(false);
-              }}
-            >
-              Discover {hasNewDiscoveries && <Badge colorScheme='red'>New</Badge>}
-            </Button>
-            <Button
-              isDisabled
-              {...getButtonStyles("buy")}
-              onClick={() => setActiveComponent("buy")}
-            >
-              Shop
-            </Button>
+
+            <Tooltip label={gameStarted ? 'Finish or exit the game to be able to navigate to Discover!' : ''}>
+              <Button
+                isDisabled={gameStarted ? true : false}
+                {...getButtonStyles("discover")}
+                onClick={() => {
+                  activeComponent === "discover" ? {} : navigateToDiscover();
+                  setHasNewDiscoveries(false);
+                }}
+              >
+                Discover {hasNewDiscoveries && <Badge colorScheme='red'>New</Badge>}
+
+              </Button>
+            </Tooltip>
+            <Tooltip label="Coming soon">
+              <Button
+                isDisabled
+                {...getButtonStyles("buy")}
+                onClick={() => setActiveComponent("buy")}
+              >
+                Shop
+              </Button>
+            </Tooltip>
           </Flex>
           <Spacer />
           <SignInModal />

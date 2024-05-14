@@ -13,7 +13,7 @@ import { useMetaMask } from '@/contexts/MetaMaskContext';
 export function Play() {
     const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
     const { player } = useAuth();
-    const { gameObjectName, methodName, objectParameter, setGameStarted, setMethodName, setGameObjectName, setObjectParameter } = useGame();
+    const { gameObjectName, methodName, objectParameter, gameStarted, setGameStarted, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems, updateDiscoveredBy, updateClaimedBy } = useItems();
     const { discoverItem, equipCosmetic, unequipCosmetic, updateInventory } = usePlayer();
     const { account, connectWallet } = useMetaMask();
@@ -55,12 +55,14 @@ export function Play() {
     }, [player]);
 
     const handleStartGame = useCallback(() => {
+        console.log(gameStarted);
         setGameStarted(true);
-    }, [])
+    }, [player])
 
     const handleEndGame = useCallback(() => {
+        console.log(gameStarted);
         setGameStarted(false);
-    }, [])
+    }, [player])
 
     useEffect(() => {
         addEventListener("DiscoverItem", handleDiscoverItem);
@@ -68,19 +70,23 @@ export function Play() {
         addEventListener("UnequipItem", handleUnequipItem);
         addEventListener("EnhanceItem", handleEnhanceItem);
         addEventListener("StartGame", handleStartGame);
+        addEventListener("EndGame", handleEndGame);
         return () => {
             removeEventListener("DiscoverItem", handleDiscoverItem);
             removeEventListener("EquipItem", handleEquipItem);
             removeEventListener("UnequipItem", handleUnequipItem);
             removeEventListener("EnhanceItem", handleEnhanceItem);
             removeEventListener("StartGame", handleStartGame);
+            removeEventListener("EndGame", handleEndGame);
         };
     }, [addEventListener,
         removeEventListener,
         handleDiscoverItem,
         handleEquipItem,
         handleUnequipItem,
-        handleEnhanceItem]);
+        handleEnhanceItem,
+        handleStartGame,
+        handleEndGame]);
 
     useEffect(() => {
         console.log("Unity is loaded: ", isLoaded);
