@@ -66,7 +66,7 @@ export default function Home() {
           <Flex as="nav" gap="6" ml={8}>
             <Button
               {...getButtonStyles("play")}
-              onClick={() => activeComponent === "play" ? {} : navigateToPlay()}
+              onClick={() => activeComponent === "play  " ? {} : navigateToPlay()}
             >
               Play
             </Button>

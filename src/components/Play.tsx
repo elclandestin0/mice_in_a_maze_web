@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { Button } from '@chakra-ui/react';
-import { Unity } from 'react-unity-webgl';
-import { useUnity } from '@/hooks/useUnity';
+import { Unity, useUnityContext } from 'react-unity-webgl';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
 import { useItems } from '@/contexts/ItemsContext';
@@ -11,7 +10,12 @@ import useRweStudios1155 from '@/hooks/useRweStudios1155';
 import { useMetaMask } from '@/contexts/MetaMaskContext';
 
 export function Play() {
-    const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnity();
+    const { unityProvider, isLoaded, sendMessage, addEventListener, removeEventListener, requestFullscreen } = useUnityContext({
+        loaderUrl: "Build/loader.js",
+        dataUrl: "Build/data.unityweb",
+        frameworkUrl: "Build/framework.js.unityweb",
+        codeUrl: "Build/code.wasm.unityweb",
+    });
     const { player } = useAuth();
     const { gameObjectName, methodName, objectParameter, gameStarted, setGameStarted, setMethodName, setGameObjectName, setObjectParameter } = useGame();
     const { items, loadAllItems, updateDiscoveredBy, updateClaimedBy } = useItems();
@@ -19,9 +23,7 @@ export function Play() {
     const { account, connectWallet } = useMetaMask();
     const { enhance } = useRweStudios1155();
 
-
     const handleDiscoverItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
         discoverItem(itemObject.id, player);
         updateDiscoveredBy(itemObject.id, player);
@@ -29,19 +31,16 @@ export function Play() {
     }, [player]);
 
     const handleEquipItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
         equipCosmetic(itemObject.id, player);
     }, [player]);
 
     const handleUnequipItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
         unequipCosmetic(itemObject.id, player);
     }, [player]);
 
     const handleEnhanceItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
         if (account == null) {
             connectWallet();
         } else {
@@ -57,12 +56,12 @@ export function Play() {
     const handleStartGame = useCallback(() => {
         console.log(gameStarted);
         setGameStarted(true);
-    }, [player])
+    }, [player]);
 
     const handleEndGame = useCallback(() => {
         console.log(gameStarted);
         setGameStarted(false);
-    }, [player])
+    }, [player]);
 
     useEffect(() => {
         addEventListener("DiscoverItem", handleDiscoverItem);
@@ -110,11 +109,18 @@ export function Play() {
             setMethodName("");
             setObjectParameter("");
         }
-    }, [gameObjectName, methodName, objectParameter]); // Dependencies that trigger this effect
+    }, [gameObjectName, methodName, objectParameter]);
+
+    const handleFullscreen = () => {
+        requestFullscreen(true);
+    };
 
     return (
         <>
-            <Unity unityProvider={unityProvider} style={{ width: '100%', height: '100%' }} />
+            <Button onClick={handleFullscreen} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+                Fullscreen
+            </Button>
+            <Unity unityProvider={unityProvider} style={{ width: '100vw', height: '100vh', display: 'block' }} />
         </>
     );
 }
