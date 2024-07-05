@@ -20,9 +20,7 @@ export function Play() {
     const { account, connectWallet } = useMetaMask();
     const { enhance } = useRweStudios1155();
 
-
     const handleDiscoverItem = useCallback((item: any) => {
-        // to-do: sanitize the shit out of this
         const itemObject = JSON.parse(item) as Item;
         discoverItem(itemObject.id, player);
         updateDiscoveredBy(itemObject.id, player);
